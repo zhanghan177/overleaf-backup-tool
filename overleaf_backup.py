@@ -3,6 +3,7 @@ import json
 from clients.OverleafClient import OverleafClient
 from storage.GitStorage import GitStorage
 from utils.debug import enable_http_client_debug, is_debug
+from utils.rate_limit import random_sleep
 
 try:
     import urllib2 as urlreq  # Python 2.x
@@ -24,14 +25,14 @@ if __name__ == "__main__":
 
     # read input params
     backup_dir = ""
-    backup_git_dir = "git_backup/"
+    # backup_git_dir = "git_backup/"
 
     if len(sys.argv) > 1:
         backup_dir = sys.argv[1]
     if not backup_dir.endswith("/"):
         backup_dir = backup_dir + "/"
 
-    backup_git_dir = os.path.join(backup_dir, backup_git_dir)
+    backup_git_dir = os.path.join(backup_dir)
 
     if len(sys.argv) > 2:
         username = sys.argv[2]
@@ -62,34 +63,44 @@ if __name__ == "__main__":
         for item in projects_info_list_old:
             projects_old_id_to_info[item["id"]] = item
 
-
     # backup projects
     storage = GitStorage()
     logging.info("Backing up projects..")
     for i, proj in enumerate(projects_info_list):
-        proj["url_git"] = "https://git.overleaf.com/%s" % proj["id"]
+        random_sleep()
+        proj["url_git"] = "https://git.overleaf.com/%s" % (proj["id"])
         proj_id = proj["id"]
-        proj_git_url = proj["url_git"]
+        proj_title = proj["title"]
+        proj_git_url = "https://%s:%s@git.overleaf.com/%s" % (
+        username.replace("@", "%40"), password, proj["id"])
 
-        proj_backup_path = os.path.join(backup_git_dir, proj_id)
+        proj_backup_path = os.path.join(backup_git_dir, proj_id + "_" + proj_title)
 
         # check if needs backup
         backup = True
-        if proj["id"] in projects_old_id_to_info\
-                and (projects_old_id_to_info[proj["id"]]["updated_at"] >= proj["updated_at"])\
-                and ("backup_up_to_date" in projects_old_id_to_info[proj["id"]] and projects_old_id_to_info[proj["id"]]["backup_up_to_date"]):
+        if proj["id"] in projects_old_id_to_info \
+                and (projects_old_id_to_info[proj["id"]]["updated_at"] >= proj["updated_at"]) \
+                and ("backup_up_to_date" in projects_old_id_to_info[proj["id"]] and
+                     projects_old_id_to_info[proj["id"]]["backup_up_to_date"]):
             proj["backup_up_to_date"] = True
             backup = False
         else:
             proj["backup_up_to_date"] = False
+            if proj["id"] in projects_old_id_to_info \
+                    and proj["title"] != projects_old_id_to_info[proj["id"]]["title"]:
+                proj_old_backup_path = os.path.join(backup_git_dir, proj_id + "_" +
+                                                    projects_old_id_to_info[proj["id"]]["title"])
+                os.rename(proj_old_backup_path, proj_backup_path)
 
         if not backup:
-            logging.info("{0}/{1} Project {2} with url {3} has not changes since last backup! Skip..."
-                         .format(i + 1, len(projects_info_list), proj_id, proj_git_url, proj_backup_path))
+            logging.info(
+                "{0}/{1} Project {2} with url {3} has not changes since last backup! Skip..."
+                .format(i + 1, len(projects_info_list), proj_id, proj["url_git"]))
             continue
 
         logging.info("{0}/{1} Backing up project {2} with url {3} to {4}"
-                     .format(i+1, len(projects_info_list), proj_id, proj_git_url, proj_backup_path))
+                     .format(i + 1, len(projects_info_list), proj_id, proj["url_git"],
+                             proj_backup_path))
 
         try:
             storage.create_or_update(proj_git_url, proj_backup_path)
@@ -99,10 +110,5 @@ if __name__ == "__main__":
             logging.exception("Something went wrong!")
 
     json.dump(projects_info_list, open(projects_json_file, "w"))
-    logging.info("Info for {0} projects saved to {1}!".format(len(projects_info_list), projects_json_file))
-
-
-
-
-
-
+    logging.info(
+        "Info for {0} projects saved to {1}!".format(len(projects_info_list), projects_json_file))

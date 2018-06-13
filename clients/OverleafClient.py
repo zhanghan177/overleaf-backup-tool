@@ -9,11 +9,7 @@ import sys
 from bs4 import BeautifulSoup
 
 from utils.debug import is_debug, enable_http_client_debug
-
-sleep_range_ms = [500, 1000]
-def random_sleep():
-    time.sleep(float(random.randrange(sleep_range_ms[0], sleep_range_ms[
-        1])) / 1000.0)  # reducing the chance of being caught by a simple api server crawler security
+from utils.rate_limit import random_sleep
 
 OVERLEAF_PROJECTS_STATUS_TYPES = ["active", "starred", "archived", "trash"]
 

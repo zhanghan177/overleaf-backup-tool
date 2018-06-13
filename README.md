@@ -1,6 +1,12 @@
 # Overleaf backup tool
 Tool for backing up projects from Overleaf.
 
+## Modify made to base repo
+
+- Support for protected projects
+- Backups are listed by their name
+- Modified storage file structure
+
 ## Installation
 Works with Python 3.+
 
@@ -22,18 +28,17 @@ You will find the cloned projects folders in backup_dir/git_backup/:
 
 ```text
 your_backup_dir/
-└── git_backup
-   ├── yourproject1id
-   │   ├── acl2018.bib
-   │   ├── acl2018.sty
-   │   ├── acl_natbib.bst
-   │   ├── main.tex
-   └── yourproject2id
-   │   ├── acl2018.bib
-   │   ├── acl2018.sty
-   │   ├── acl_natbib.bst
-   │   ├── main.tex
-   ├── projects.json
+ ├── projects.json      # List of all projects
+ ├── yourproject1id
+ │   ├── acl2018.bib
+ │   ├── acl2018.sty
+ │   ├── acl_natbib.bst
+ │   ├── main.tex
+ ├── yourproject2id
+ │   ├── acl2018.bib
+ │   ├── acl2018.sty
+ │   ├── acl_natbib.bst
+ │   ├── main.tex
 ```
 
 projects.json contains the metadata about the projects in Overleaf.

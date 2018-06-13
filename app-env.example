@@ -1,0 +1,2 @@
+export overleaf_user="username"
+export overleaf_pass="password"
