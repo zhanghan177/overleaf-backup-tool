@@ -30,7 +30,7 @@ cp app-env.example app-env
 # Update credentails in app-env
 source app-env
 
-python overleaf_backup.py
+python overleaf_backup.py backup_dir
 ```
 
 ## How it works
