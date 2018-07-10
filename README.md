@@ -3,6 +3,9 @@ Tool for backing up projects from Overleaf.
 
 ## Modify made to base repo
 
+The original repo is at: https://github.com/tbmihailov/overleaf-backup-tool.git
+I have made the following modifications to enable a better support for:
+
 - Support for protected projects
 - Backups are listed by their name
 - Modified storage file structure
@@ -11,7 +14,7 @@ Tool for backing up projects from Overleaf.
 Works with Python 3.+
 
 ```bash
-git clone https://github.com/tbmihailov/overleaf-backup-tool.git
+git clone https://github.com/zhanghan177/overleaf-backup-tool
 cd overleaf-backup-tool
 pip install -r requirements.txt
 ```
@@ -19,6 +22,15 @@ pip install -r requirements.txt
 ## Usage
 ```bash
 python overleaf_backup.py backup_dir overleafuser@domain.com overleafpass
+```
+
+If you want to store your Overleaf credentials in environment variables, you could
+```bash
+cp app-env.example app-env
+# Update credentails in app-env
+source app-env
+
+python overleaf_backup.py
 ```
 
 ## How it works
@@ -29,12 +41,12 @@ You will find the cloned projects folders in backup_dir/git_backup/:
 ```text
 your_backup_dir/
  ├── projects.json      # List of all projects
- ├── yourproject1id
+ ├── your-project-1-id
  │   ├── acl2018.bib
  │   ├── acl2018.sty
  │   ├── acl_natbib.bst
  │   ├── main.tex
- ├── yourproject2id
+ ├── your-project-2-id
  │   ├── acl2018.bib
  │   ├── acl2018.sty
  │   ├── acl_natbib.bst
