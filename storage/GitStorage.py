@@ -6,6 +6,7 @@ from git import Repo
 
 class GitStorage():
     def create_or_update(self, git_url, repo_dir):
+        repo_dir = repo_dir.rstrip('.') # trailing dots cause error in git clone
         if os.path.isdir(repo_dir):
             # pull
             g = git.cmd.Git(repo_dir)

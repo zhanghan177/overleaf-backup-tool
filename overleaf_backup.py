@@ -25,7 +25,6 @@ if __name__ == "__main__":
 
     # read input params
     backup_dir = ""
-    # backup_git_dir = "git_backup/"
 
     if len(sys.argv) > 1:
         backup_dir = sys.argv[1]
