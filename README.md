@@ -27,9 +27,10 @@ python overleaf_backup.py backup_dir overleafuser@domain.com overleafpass
 If you want to store your Overleaf credentials in environment variables, you could
 ```bash
 cp app-env.example app-env
-# Update credentails in app-env
-source app-env
 
+vim app-env # Update credentails in app-env
+
+source app-env
 python overleaf_backup.py backup_dir
 ```
 
